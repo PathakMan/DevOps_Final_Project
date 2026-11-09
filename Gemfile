@@ -1,9 +1,7 @@
 source "https://rubygems.org"
 
-ruby "3.3.13"
-
-# Core Rails framework (currently supported release)
-gem "rails", "~> 7.1.3"
+# Latest currently supported Rails release
+gem "rails", "8.1.4.1"
 
 # PostgreSQL database adapter
 gem "pg", "~> 1.5"

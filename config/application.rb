@@ -10,7 +10,7 @@ Bundler.require(*Rails.groups)
 
 module DevopsFinalProject
   class Application < Rails::Application
-    config.load_defaults 7.1
+    config.load_defaults 8.1
 
     # Enable eager loading in production for thread safety and performance
     config.eager_load = ENV["RAILS_ENV"] == "production"
