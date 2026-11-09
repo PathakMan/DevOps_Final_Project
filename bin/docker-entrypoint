@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+# Remove a potentially pre-existing server.pid for Rails
+rm -f /app/tmp/pids/server.pid
+
+# Prepare database (creates DB if missing and runs pending migrations)
+bundle exec rake db:prepare
+
+# Execute the main container command (Puma)
+exec "$@"

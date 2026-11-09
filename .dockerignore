@@ -1,0 +1,7 @@
+.git
+.gitignore
+log/*
+tmp/*
+postgres-data/
+docker-compose.yaml
+README.md
