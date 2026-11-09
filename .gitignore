@@ -1,0 +1,11 @@
+# Ignore bundler artifacts and log files
+/.bundle/
+/vendor/bundle
+/log/*
+/tmp/*
+!.keep
+
+# Ignore environment files and local DB data
+.env
+postgres-data/
+.DS_Store
