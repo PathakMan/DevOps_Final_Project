@@ -1,0 +1,48 @@
+<h1>Task Manager (Rails + PostgreSQL)</h1>
+
+<div class="card">
+  <h3>Create New Task</h3>
+  <%= form_with(model: @task, url: tasks_path, local: true) do |f| %>
+    <div class="form-group">
+      <%= f.label :title, "Title" %>
+      <%= f.text_field :title, required: true, placeholder: "e.g., Configure Docker Compose" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :description, "Description" %>
+      <%= f.text_area :description, rows: 2, placeholder: "Optional details..." %>
+    </div>
+
+    <%= f.submit "Add Task", class: "btn btn-primary" %>
+  <% end %>
+</div>
+
+<div class="card">
+  <h3>All Tasks (<%= @tasks.count %>)</h3>
+
+  <% if @tasks.empty? %>
+    <p>No tasks yet. Create your first one above!</p>
+  <% else %>
+    <% @tasks.each do |task| %>
+      <div class="task-item">
+        <div>
+          <strong class="<%= 'completed' if task.completed %>"><%= task.title %></strong>
+          <% if task.description.present? %>
+            <div style="font-size: 14px; color: #64748b;"><%= task.description %></div>
+          <% end %>
+        </div>
+
+        <div class="actions">
+          <%= form_with(model: task, url: task_path(task), method: :patch, local: true) do |f| %>
+            <%= f.hidden_field :completed, value: !task.completed %>
+            <%= f.submit(task.completed ? "Undo" : "Complete", class: "btn btn-secondary") %>
+          <% end %>
+
+          <%= link_to "Edit", edit_task_path(task), class: "btn btn-secondary" %>
+
+          <%= button_to "Delete", task_path(task), method: :delete, class: "btn btn-danger" %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>
