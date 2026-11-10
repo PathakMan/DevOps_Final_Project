@@ -1,3 +1,6 @@
+# ==========================================
+# Service 1: Ruby on Rails Application Service (Internal ClusterIP)
+# ==========================================
 apiVersion: v1
 kind: Service
 metadata:
@@ -5,6 +8,7 @@ metadata:
   namespace: default
   labels:
     app: rails-crud-app
+    tier: web
 spec:
   type: ClusterIP
   selector:
@@ -14,3 +18,24 @@ spec:
       protocol: TCP
       port: 3000
       targetPort: 3000
+---
+# ==========================================
+# Service 2: PostgreSQL Database Service (Internal ClusterIP)
+# ==========================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  namespace: default
+  labels:
+    app: postgres
+    tier: database
+spec:
+  type: ClusterIP
+  selector:
+    app: postgres
+  ports:
+    - name: postgres
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
