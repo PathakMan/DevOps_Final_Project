@@ -1,34 +1,29 @@
-# ==========================================
-# Stage 1: Build Stage
-# ==========================================
+# Stage 1: Build gems using the full Ruby 3.3 image
 FROM ruby:3.3 AS builder
 
 WORKDIR /app
 
-# Configure bundler for production
+# Set production environment and skip dev/test gems
 ENV RAILS_ENV="production" \
     BUNDLE_WITHOUT="development:test" \
     BUNDLE_PATH="/usr/local/bundle"
 
-# Install gems first to leverage Docker layer caching
+# Copy Gemfile first so Docker caches installed gems
 COPY Gemfile ./
 RUN bundle install --jobs 4 --retry 3
 
-# Copy the rest of the application source code
+# Copy the rest of the Rails app
 COPY . .
 
-# ==========================================
-# Stage 2: Runtime Stage (Minimal Image)
-# ==========================================
+
+# Stage 2: Final slim image for running the app
 FROM ruby:3.3-slim AS runtime
 
 WORKDIR /app
 
-# Install runtime dependencies:
-# - libpq5 is required for the pg gem to communicate with PostgreSQL
-# - curl is required for container health checks
+# Install libpq5 for PostgreSQL connection and libyaml/curl for Rails 8 and healthchecks
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y libpq5 curl && \
+    apt-get install --no-install-recommends -y libpq5 libyaml-0-2 curl && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 ENV RAILS_ENV="production" \
@@ -36,26 +31,25 @@ ENV RAILS_ENV="production" \
     BUNDLE_PATH="/usr/local/bundle" \
     PORT="3000"
 
-# Create a non-root user and group to run the application securely
+# Create a non-root user (rails) for security
 RUN groupadd --system --gid 1000 rails && \
     useradd --uid 1000 --gid 1000 --create-home --shell /bin/bash rails
 
-# Copy installed gems and application code from the builder stage
+# Copy compiled gems and app files from the builder stage
 COPY --from=builder --chown=rails:rails /usr/local/bundle /usr/local/bundle
 COPY --from=builder --chown=rails:rails /app /app
 
-# Ensure required runtime directories exist and belong to the non-root user
+# Make sure temp/log folders exist and entrypoint script can run
 RUN mkdir -p /app/tmp/pids /app/log && \
     chown -R rails:rails /app/tmp /app/log && \
     chmod +x /app/bin/docker-entrypoint
 
-# Switch to the non-root user
+# Switch from root to the rails user
 USER rails
 
-# Expose the Puma application port
+# Puma listens on port 3000
 EXPOSE 3000
 
+# Run db migrations on startup, then start Puma
 ENTRYPOINT ["/app/bin/docker-entrypoint"]
-
-# Start the Puma server shipped with Rails
 CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]

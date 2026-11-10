@@ -1,0 +1,11 @@
+=== POD METRICS AT 45s ===
+NAME                              CPU(cores)   MEMORY(bytes)   
+postgres-88c6596d4-zdp48          8m           26Mi            
+rails-crud-app-687d4cdfdf-xs4tn   6m           66Mi            
+=== POD METRICS AT 100s ===
+NAME                       CPU(cores)   MEMORY(bytes)   
+postgres-88c6596d4-zdp48   13m          38Mi            
+=== POD METRICS AT 160s ===
+NAME                              CPU(cores)   MEMORY(bytes)   
+postgres-88c6596d4-zdp48          11m          38Mi            
+rails-crud-app-687d4cdfdf-xs4tn   133m         69Mi            
