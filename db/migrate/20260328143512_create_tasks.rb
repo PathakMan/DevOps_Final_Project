@@ -1,6 +1,6 @@
 class CreateTasks < ActiveRecord::Migration[8.1]
   def change
-    create_table :tasks do |t|
+    create_table :tasks, if_not_exists: true do |t|
       t.string :title, null: false
       t.text :description
       t.boolean :completed, default: false, null: false
