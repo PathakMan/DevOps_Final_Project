@@ -2,6 +2,8 @@
 .gitignore
 log/*
 tmp/*
+k8s/
+tests/
 postgres-data/
 docker-compose.yaml
 README.md
